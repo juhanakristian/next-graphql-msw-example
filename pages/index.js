@@ -18,14 +18,16 @@ export default function Home() {
     variables: { login: "juhanakristian" },
   });
 
-  if (loading || !data) return <p>Loading...</p>;
-
-  console.log(data);
-
   return (
     <div className={styles.container}>
-      <h3>{data.user.name}</h3>
-      <p>{data.user.bio}</p>
+      {loading || !data ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <h3>{data.user.name}</h3>
+          <p>{data.user.bio}</p>
+        </>
+      )}
     </div>
   );
 }
