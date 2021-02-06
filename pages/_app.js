@@ -8,7 +8,9 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-require("../mocks");
+if (process.env.NEXT_PUBLIC_API_MOCKING === "enabled") {
+  require("../mocks");
+}
 
 function MyApp({ Component, pageProps }) {
   return (
