@@ -1,8 +1,9 @@
+import React from "react";
 import Head from "next/head";
-import { StarIcon } from "../components/icons";
+import { EmptyStarIcon, FilledStarIcon } from "../components/icons";
 import styles from "../styles/Home.module.css";
 
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 
 const GET_REPOSITORY = gql`
   query RepositoryQuery($repository: String!, $owner: String!) {
@@ -29,27 +30,42 @@ const ADD_STAR = gql`
 `;
 
 export default function Home() {
-  const { loading, error, data } = useQuery(GET_REPOSITORY, {
-    pollInterval: 1000,
+  const [starred, setStarred] = React.useState(false);
+
+  const { loading, error, data: queryData } = useQuery(GET_REPOSITORY, {
+    pollInterval: 10000,
     variables: {
       owner: "juhanakristian",
       repository: "next-graphql-msw-example",
     },
   });
 
+  const [addStar] = useMutation(ADD_STAR);
+
+  function handleAddStar(e) {
+    e.preventDefault();
+    addStar({ starrable: queryData.repository.id });
+    setStarred(true);
+  }
+
   return (
     <div className={styles.container}>
-      {loading || !data ? (
+      {loading || !queryData ? (
         <p>Loading...</p>
       ) : (
         <div>
-          <h3>{data.repository.name}</h3>
-          <p>{data.repository.description}</p>
+          <h3>{queryData.repository.name}</h3>
+          <p>{queryData.repository.description}</p>
           <div className={styles.star}>
-            <span>
-              <StarIcon /> Star
-            </span>
-            <div>{data.repository.stargazerCount}</div>
+            <button onClick={handleAddStar}>
+              {starred ? <FilledStarIcon /> : <EmptyStarIcon />}
+              <span>Star</span>
+            </button>
+            <a href="https://github.com/juhanakristian/next-graphql-msw-example/stargazers">
+              {starred
+                ? queryData.repository.stargazerCount + 1
+                : queryData.repository.stargazerCount}
+            </a>
           </div>
         </div>
       )}

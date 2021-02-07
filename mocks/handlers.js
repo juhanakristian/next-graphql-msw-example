@@ -24,7 +24,7 @@ export const handlers = [
           clientMutationId: null,
           starrable: {
             id: "MDEwOlJlcG9zaXRvcnkzMzU0MTc5Mjc=",
-            stargazerCount: 1,
+            stargazerCount: 2,
           },
         },
       })
